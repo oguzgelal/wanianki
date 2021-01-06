@@ -48,7 +48,7 @@
   },
   "devDependencies": {
     "@babel/core": "~7.9.0",
-    "axios": "^0.19.2",
+    "axios": "^0.21.1",
     "babel-plugin-module-resolver": "^4.0.0",
     "babel-preset-expo": "8.3.0",
     "firebase-tools": "^8.4.3",
