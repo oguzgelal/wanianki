@@ -21,6 +21,15 @@ export const DARK_MODE = 'DARK_MODE';
 export const BACK_TO_BACK_MODE = 'BACK_TO_BACK_MODE';
 export const MEANING_FIRST = 'MEANING_FIRST';
 
+// review orders
+export const REVIEW_ORDER = 'REVIEW_ORDER'
+export const RANDOM_ORDER = 'RANDOM_ORDER'
+export const LOWEST_LEVEL_FIRST = 'LOWEST_LEVEL_FIRST'
+export const CURRENT_LEVEL_FIRST = 'CURRENT_LEVEL_FIRST'
+export const ASCENDING_SRS_STAGE = 'ASCENDING_SRS_STAGE'
+export const DESCENDING_SRS_STAGE = 'DESCENDING_SRS_STAGE'
+
+
 export const TERMINOLOGY = {
   
   // subject types

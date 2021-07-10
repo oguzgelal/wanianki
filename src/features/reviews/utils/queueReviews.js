@@ -6,8 +6,7 @@ import adjustQueue from 'src/features/reviews/utils/adjustQueue';
 
 // pick multiple reviews from the list, respecting the
 // removed items from the list from the previous loop
-const queueReviews = (reviews, reviewTypesHistory, queue) => {
-
+const queueReviews = (reviews, reviewTypesHistory, queue, subjects) => {
   let _reviews = reviews;
   let _reviewTypesHistory = reviewTypesHistory;
 
@@ -22,11 +21,16 @@ const queueReviews = (reviews, reviewTypesHistory, queue) => {
       newReviewTypeHistory,
     ] = pickReviewAndType(_reviews, _reviewTypesHistory);
 
+    // find the review's subject
+    const subject = subjects.find(subject => subject.id === _.get(review, 'data.subject_id'));
+    const subjectLevel = _.get(subject, "data.level");
+
     // add current pick to the queue
     queue.push({
       id: randomId(),
       review,
       reviewType,
+      subjectLevel,
     });
 
     _reviews = newReviews;
@@ -37,7 +41,7 @@ const queueReviews = (reviews, reviewTypesHistory, queue) => {
   return queue;
 }
 
-export default reviews => {
-  const queued = queueReviews(reviews, {}, []);
+export default (reviews, subjects) => {
+  const queued = queueReviews(reviews, {}, [], subjects);
   return adjustQueue(queued);
 };

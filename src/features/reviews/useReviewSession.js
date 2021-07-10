@@ -8,7 +8,7 @@ import { MEANING, RADICAL } from 'src/common/constants';
 import listToDict from 'src/utils/listToDict';
 import queueReviews from 'src/features/reviews/utils/queueReviews';
 
-import { BACK_TO_BACK_MODE, MEANING_FIRST} from 'src/common/constants';
+import { BACK_TO_BACK_MODE, MEANING_FIRST, REVIEW_ORDER } from 'src/common/constants';
 import { useStoreState } from 'easy-peasy';
 import adjustQueue from 'src/features/reviews/utils/adjustQueue';
 
@@ -32,16 +32,18 @@ export default (reviews, subjects) => {
   const [ completedCards, setCompletedCards ] = useState({});
   const [ incorrectCards, setIncorrectCards ] = useState({});
 
-  // Sort reading-meaning card pairs back-to-back
+  // Sort reading-meaning card pairs back-to-back according to the review order
   const userSettings = useStoreState(state => state.session.userSettings);
   const backToBackMode = _.get(userSettings, BACK_TO_BACK_MODE);
   const meaningFirst = _.get(userSettings, MEANING_FIRST);
+  const reviewOrder = _.get(userSettings, REVIEW_ORDER);
   // Re-sort queue when the relevant user settings change
   useEffect(() => {
-    setQueue(adjustQueue(queue, backToBackMode, meaningFirst))
+    setQueue(adjustQueue(queue, backToBackMode, meaningFirst, reviewOrder))
   }, [
-      backToBackMode,
-      meaningFirst,
+    backToBackMode,
+    meaningFirst,
+    reviewOrder,
   ]);
 
   // refresh &
@@ -63,8 +65,8 @@ export default (reviews, subjects) => {
     setTotalReviews(reviews ? reviews.length : 0);
     
     // create queue
-    const _queue = queueReviews(reviews);
-    setQueue(adjustQueue(_queue, backToBackMode, meaningFirst));
+    const _queue = queueReviews(reviews, subjects);
+    setQueue(adjustQueue(_queue, backToBackMode, meaningFirst, reviewOrder));
     setTotalCards(_queue.length);
     
   }, [

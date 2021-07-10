@@ -37,6 +37,7 @@
     "react-native-easy-toast": "^1.2.0",
     "react-native-elements": "^3.0.0",
     "react-native-modal": "^11.5.6",
+    "react-native-picker-select": "^8.0.4",
     "react-native-safe-area-context": "3.1.9",
     "react-native-web": "~0.13.12",
     "react-redux": "^7.2.0",

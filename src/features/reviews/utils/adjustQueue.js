@@ -9,14 +9,34 @@
 
 import _ from 'lodash';
 
-import { MEANING, RADICAL } from 'src/common/constants';
+import { MEANING, RADICAL, RANDOM_ORDER, LOWEST_LEVEL_FIRST, CURRENT_LEVEL_FIRST, ASCENDING_SRS_STAGE, DESCENDING_SRS_STAGE } from 'src/common/constants';
 
 const ALLOWED_MAX_DISTANCE = 10;
 const ALLOWED_MIN_DISTANCE = 3;
 
-export default (queue, backToBackMode = false, meaningFirst = false) => {
-  const newQueue = queue.slice();
+export default (queue, backToBackMode = false, meaningFirst = false, reviewOrder = RANDOM_ORDER) => {
+
+  let newQueue = queue.slice();
   let currentIndex = 0;
+
+  // sort new queue based on the selected review order
+  switch (reviewOrder) {
+    case RANDOM_ORDER:
+      newQueue = _.shuffle(newQueue);
+      break;
+    case LOWEST_LEVEL_FIRST:
+      newQueue = _.orderBy(newQueue, 'subjectLevel', 'asc')
+      break;
+    case CURRENT_LEVEL_FIRST:
+      newQueue = _.orderBy(newQueue, 'subjectLevel', 'desc')
+      break;
+    case ASCENDING_SRS_STAGE:
+      newQueue = _.orderBy(newQueue, 'review.data.srs_stage', 'asc')
+      break;
+    case DESCENDING_SRS_STAGE:
+      newQueue = _.orderBy(newQueue, 'review.data.srs_stage', 'desc')
+      break;
+  }
 
   // avoid recursion to avoid exceeding maximum call stack size
   while (currentIndex < queue.length - 1) {
