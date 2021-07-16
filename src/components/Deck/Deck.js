@@ -40,6 +40,7 @@ const Deck = ({
 
   // deck size
   const [revealed, setRevealed] = useState(false);
+  const [mnemonicToggled, setMnemonicToggled] = useState(false);
   const [swipeLock, setSwipeLock] = useState(true);
   const [deckWidth, setDeckWidth] = useState(null);
   const [deckHeight, setDeckHeight] = useState(null);
@@ -47,6 +48,7 @@ const Deck = ({
   // control dismiss of the top card
   const useDismiss = direction => {
     setRevealed(false);
+    setMnemonicToggled(false);
     setSwipeLock(!allowSkipping);
     dismissCard(direction);
   }
@@ -55,6 +57,10 @@ const Deck = ({
   const useReveal = () => {
     setRevealed(true);
     setSwipeLock(false);
+  }
+
+  const useMnemonicToggle = () => {
+    setMnemonicToggled(!mnemonicToggled);
   }
 
   // calculate coordinates which cards
@@ -110,6 +116,7 @@ const Deck = ({
     event: 'keydown',
     handler: e => {
       if (e.code === 'Space' && !revealed) useReveal();
+      if (e.code === 'Space' && revealed) useMnemonicToggle();
       if (!allowSkipping && swipeLock) return;
       if (e.key === 'ArrowLeft' || e.code === 'ArrowLeft') triggerSwipeLeft();
       if (e.key === 'ArrowRight' || e.code === 'ArrowRight') triggerSwipeRight();
@@ -166,6 +173,8 @@ const Deck = ({
                 getMovementInterpolation,
                 reveal: useReveal,
                 revealed: isFirstCard && revealed,
+                toggleMnemonic: useMnemonicToggle,
+                mnemonicToggled: isFirstCard && mnemonicToggled,
               })}
           </Animated.View>
         );

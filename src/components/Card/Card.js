@@ -28,9 +28,6 @@ const DirectionRightIcon = () => (
   </View>
 );
 
-const ConditionalWrapper = ({ condition, wrapper, children }) =>
-    condition ? wrapper(children) : children;
-
 const Card = ({
   empty,
   deckProps = {},
@@ -39,12 +36,16 @@ const Card = ({
   reviewQuestion,
   reviewQuestionComponent,
   reviewAnswer,
+  meaningMnemonic,
+  readingMnemonic,
   quickMode
 }) => {
 
   const {
     reveal,
     revealed,
+    toggleMnemonic,
+    mnemonicToggled,
     isFirstCard,
     getClearInterpolation,
   } = deckProps;
@@ -56,11 +57,15 @@ const Card = ({
   }
 
   const onCardPressed = () =>{
-    // Medium haptic feedback feels the best
-    if (device('mobile')) {
-      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy)
+    if (revealed) {
+      toggleMnemonic()
+    } else if (quickMode) { // Reveal answer on press only if quick mode is on
+      // Medium haptic feedback feels the best
+      if (device('mobile')) {
+        Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy)
+      }
+      reveal()
     }
-    reveal()
   }
 
   return (
@@ -83,33 +88,33 @@ const Card = ({
               : (TERMINOLOGY[subjectType] || '')
             }
           />
-        {/* Use the TouchableWithoutFeedback only when the card is not revealed and quickmode is on */}
-        <ConditionalWrapper
-            condition={!revealed && quickMode}
-            wrapper={children => <TouchableWithoutFeedback onPress={onCardPressed}>{children}</TouchableWithoutFeedback>}>
-          <View style={{height: "100%", flexGrow: 1}}>
-            {/* question and question statement */}
-            <Question
-                revealed={revealed}
-                answer={reviewAnswer}
-                question={reviewQuestion}
-                questionComponent={reviewQuestionComponent}
-                reviewType={reviewType}
-                subjectType={subjectType}
-            />
+          <TouchableWithoutFeedback onPress={onCardPressed}>
+            <View style={{height: "100%", flexGrow: 1, outline: 'none'}}>
+              {/* question and question statement */}
+              <Question
+                  revealed={revealed}
+                  mnemonicToggled={mnemonicToggled}
+                  answer={reviewAnswer}
+                  question={reviewQuestion}
+                  questionComponent={reviewQuestionComponent}
+                  reviewType={reviewType}
+                  subjectType={subjectType}
+                  meaningMnemonic={meaningMnemonic}
+                  readingMnemonic={readingMnemonic}
+              />
 
-            {/* reveal button */}
-            <View style={{height: 52}}>
-              {!revealed && !quickMode && (
-                  <LongPressButton
-                      text="Reveal"
-                      flashText={`Press and Hold${device('web') ? ' / Spacebar' : ''}`}
-                      onComplete={reveal}
-                  />
-              )}
+              {/* reveal button */}
+              <View style={{height: 52}}>
+                {!revealed && !quickMode && (
+                    <LongPressButton
+                        text="Reveal"
+                        flashText={`Press and Hold${device('web') ? ' / Spacebar' : ''}`}
+                        onComplete={reveal}
+                    />
+                )}
+              </View>
             </View>
-          </View>
-        </ConditionalWrapper>
+          </TouchableWithoutFeedback>
       </View>
 
     </View>
@@ -124,6 +129,8 @@ Card.propTypes = {
   reviewQuestion: PropTypes.string,
   reviewQuestionComponent: PropTypes.any,
   reviewAnswer: PropTypes.string,
+  meaningMnemonic: PropTypes.string,
+  readingMnemonic: PropTypes.string,
   quickMode: PropTypes.bool,
 };
 

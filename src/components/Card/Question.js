@@ -9,7 +9,11 @@ import {
   READING,
   TERMINOLOGY,
 } from 'src/common/constants';
-import useColorScheme from 'src/hooks/useColorScheme';;
+import useColorScheme from 'src/hooks/useColorScheme';
+
+import device from 'src/utils/device';
+
+import TextWithMarkups from 'src/components/TextWithMarkups/TextWithMarkups';
 
 const Question = ({
   subjectType,
@@ -18,6 +22,9 @@ const Question = ({
   questionComponent,
   answer,
   revealed,
+  mnemonicToggled,
+  meaningMnemonic,
+  readingMnemonic
 }) => {
   const colorScheme = useColorScheme();
   return (
@@ -39,7 +46,7 @@ const Question = ({
       <View style={[styles.separator, colorScheme === "light" ? null : styles.separator_dark]}/>
 
       {/* answer */}
-      <View style={styles.answer}>
+      {!mnemonicToggled && <View style={styles.answer}>
         <Text
           style={[
             styles.answerText,colorScheme === "light" ? null : styles.answerText_Dark,
@@ -50,10 +57,24 @@ const Question = ({
             ),
           ]}
         >
+          {/* answer itself */}
           {revealed && answer}
+
+          {/* review type */}
           {!revealed && TERMINOLOGY[reviewType]}
+
+          {/* mnemic toggle hint */}
+          {revealed && <Text style={styles.mnemonicHint}>
+            {/* one new line is sufficient with readings as the answer font adds enough vertical space by itself */}
+            {reviewType === READING ? '\n' : '\n\n'} 
+            {device('web') ? 'Press space for mnemonic' : 'Tap for mnemonic'}
+          </Text>}
         </Text>
-      </View>
+      </View>}
+
+      {mnemonicToggled && <View>
+        <TextWithMarkups text={reviewType === READING ? readingMnemonic : meaningMnemonic} />
+      </View>}
 
     </View>
   );
@@ -64,6 +85,9 @@ Question.propTypes = {
   question: PropTypes.string,
   answer: PropTypes.string,
   revealed: PropTypes.bool,
+  mnemonicToggled: PropTypes.bool,
+  meaningMnemonic: PropTypes.string,
+  readingMnemonic: PropTypes.string,
 };
 
 const styles = StyleSheet.create({
@@ -112,6 +136,11 @@ const styles = StyleSheet.create({
   },
   answerTextLarge: {
     fontSize: 20
+  },
+  mnemonicHint: {
+    opacity: 0.4,
+    fontSize: 14,
+    fontWeight: 400,
   },
   [KANJI]: { color: theme.color.kanji },	
   [RADICAL]: { color: theme.color.radical },	

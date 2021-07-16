@@ -200,6 +200,8 @@ const Review = ({ demo = false, stopDemo } = {}) => {
               const subjectId = _.get(review, 'data.subject_id');
               const subject = _.get(subjectsDict, subjectId);
               const subjectType = _.get(subject, 'object');
+              const meaningMnemonic = _.get(subject, 'data.meaning_mnemonic');
+              const readingMnemonic = _.get(subject, 'data.reading_mnemonic');
               const {
                 question,
                 questionComponent,
@@ -215,6 +217,8 @@ const Review = ({ demo = false, stopDemo } = {}) => {
                   reviewQuestion={question}
                   reviewQuestionComponent={questionComponent}
                   reviewAnswer={answer}
+                  meaningMnemonic={meaningMnemonic}
+                  readingMnemonic={readingMnemonic}
                   quickMode={quickMode}
                 />
               )
